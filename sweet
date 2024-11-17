@@ -1,0 +1,59 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyFirstApp());
+}
+
+class MyFirstApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false, // Remove the debug banner
+      title: 'My First App',
+      home: SweetCreationsScreen(),
+    );
+  }
+}
+
+
+class SweetCreationsScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: Color(0xFFFFA6A2), // Background color (pink)
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Spacer(flex: 3), // Adjust spacing above the main image
+            // Main image
+            Image.asset(
+              'assets/main_image.png', // Replace with the correct image path
+              width: 150, // Adjust width as needed
+              height: 150, // Adjust height as needed
+            ),
+            SizedBox(height: 20), // Space between the image and text
+            // Text below the image
+            Text(
+              'Sweet Creations',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black, // Text color
+              ),
+            ),
+            Spacer(flex: 1), // Adjust spacing between text and bottom decoration
+            // Bottom decorative image
+            Image.asset(
+              'assets/decorative_image.png', // Replace with the correct image path
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
