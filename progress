@@ -1,0 +1,969 @@
+import 'package:flutter/material.dart';
+void main() {
+ runApp(SweetCreationsApp());
+}
+class SweetCreationsApp extends StatelessWidget {
+ @override
+ Widget build(BuildContext context) {
+ return MaterialApp(
+ debugShowCheckedModeBanner: false,
+ home: SplashScreen (),
+ );
+ }
+}
+class SplashScreen extends StatefulWidget {
+ @override
+ _SplashScreenState createState() => _SplashScreenState();
+}
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+ late AnimationController _controller;
+ late Animation<double> _bounceAnimation;
+ @override
+ void initState() {
+ super.initState();
+ _controller = AnimationController(
+ duration: Duration(seconds: 2), // Duration of one bounce cycle
+ vsync: this,
+ );
+ _bounceAnimation = Tween<double>(begin: 1.0, end: 1.2)
+ .chain(CurveTween(curve: Curves.elasticInOut))
+ .animate(_controller);
+ _controller.repeat(reverse: true);
+ _navigateToLogin();
+ }
+ // Navigate to the Login screen after a delay
+ _navigateToLogin() async {
+ await Future.delayed(Duration(seconds: 5)); // Splash screen duration
+ Navigator.pushReplacement(
+ context,
+ MaterialPageRoute(builder: (context) => LoginScreen()),
+ );
+ }
+ @override
+ void dispose() {
+ _controller.dispose();
+ super.dispose();
+ }
+ @override
+ Widget build(BuildContext context) {
+ return Scaffold(
+ body: Container(
+ decoration: BoxDecoration(
+ gradient: LinearGradient(
+ begin: Alignment.bottomRight,
+ end: Alignment.topLeft,
+ colors: [Colors.pink, Colors.blue],
+ ),
+ ),
+ child: Center(
+ child: Column(
+ mainAxisAlignment: MainAxisAlignment.center,
+ children: [
+ AnimatedBuilder(
+ animation: _bounceAnimation,
+ builder: (context, child) {
+ return Transform.scale(
+ scale: _bounceAnimation.value,
+ child: Image.network(
+ 'https://res.cloudinary.com/dn38ffinf/image/upload/v1733118295/logo_pkdaas.png',
+ width: 200,
+ height: 200,
+ fit: BoxFit.cover,
+ ),
+ );
+ },
+ ),
+ SizedBox(height: 20),
+ Text(
+ 'Sweet Creations',
+ style: TextStyle(
+ fontSize: 24,
+ fontWeight: FontWeight.bold,
+ color: Colors.white,
+ ),
+ ),
+ ],
+ ),
+ ),
+ ),
+ );
+ }
+}
+class LoginScreen extends StatefulWidget {
+ @override
+ _LoginScreenState createState() => _LoginScreenState();
+}
+class _LoginScreenState extends State<LoginScreen> {
+ bool _isPasswordVisible = false;
+ @override
+ Widget build(BuildContext context) {
+ return Scaffold(
+ body: Container(
+ decoration: BoxDecoration(
+ gradient: LinearGradient(
+ begin: Alignment.bottomRight,
+ end: Alignment.topLeft,
+ colors: [Colors.pink, Colors.blue],
+ ),
+ ),
+ child: Padding(
+ padding: const EdgeInsets.all(16.0),
+ child: Center(
+ child: Column(
+ mainAxisAlignment: MainAxisAlignment.center,
+ children: [
+ Image.network(
+ 'https://res.cloudinary.com/dn38ffinf/image/upload/v1733118295/logo_pkdaas.png',
+ width: 100,
+ height: 100,
+ fit: BoxFit.cover,
+ ),
+ SizedBox(height: 10),
+ Text(
+ 'Sweet Creations',
+ style: TextStyle(
+ fontSize: 24,
+ fontWeight: FontWeight.bold,
+ color: Colors.white,
+ ),
+ ),
+ SizedBox(height: 20),
+ TextField(
+ keyboardType: TextInputType.emailAddress,
+ decoration: InputDecoration(
+ labelText: 'Email',
+ border: OutlineInputBorder(
+ borderRadius: BorderRadius.circular(8.0),
+ ),
+ filled: true,
+ fillColor: Colors.white,
+ ),
+ ),
+ SizedBox(height: 16),
+ TextField(
+ obscureText: !_isPasswordVisible,
+ decoration: InputDecoration(
+ labelText: 'Password',
+ border: OutlineInputBorder(
+ borderRadius: BorderRadius.circular(8.0),
+ ),
+ filled: true,
+ fillColor: Colors.white,
+ suffixIcon: IconButton(
+ icon: Icon(
+ _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+ ),
+ onPressed: () {
+ setState(() {
+ _isPasswordVisible = !_isPasswordVisible;
+ });
+ },
+ ),
+ ),
+ ),
+ Align(
+ alignment: Alignment.centerRight,
+ child: TextButton(
+ onPressed: () {},
+ child: Text('Forgot password?'),
+ ),
+ ),
+ SizedBox(height: 20),
+ ElevatedButton(
+ onPressed: () {
+ Navigator.push(
+ context,
+ MaterialPageRoute(builder: (context) => SweetCreationHomePage()),
+ );
+ },
+ style: ElevatedButton.styleFrom(
+ backgroundColor: Colors.blue,
+ minimumSize: Size(double.infinity, 50),
+ shape: RoundedRectangleBorder(
+ borderRadius: BorderRadius.circular(8.0),
+ ),
+ ),
+ child: Text(
+ 'Login',
+ style: TextStyle(fontSize: 18, color: Colors.white),
+ ),
+ ),
+ SizedBox(height: 20),
+ Row(
+ mainAxisAlignment: MainAxisAlignment.center,
+ children: [
+ Text("Don't have an account? "),
+ GestureDetector(
+ onTap: () { 
+ Navigator.push(
+ context,
+ MaterialPageRoute(
+ builder: (context) => const SignUpPage(),
+ ),
+ );
+ },
+ child: Text(
+ 'Sign up',
+ style: TextStyle(
+ fontWeight: FontWeight.bold,
+ color: Colors.blue,
+ ),
+ ),
+ ),
+ ],
+ ),
+ ],
+ ),
+ ),
+ ),
+ ),
+ );
+ }
+}
+class LoginPage extends StatelessWidget {
+ const LoginPage({Key? key}) : super(key: key);
+ @override
+ Widget build(BuildContext context) {
+ return Scaffold(
+ appBar: AppBar(
+ title: const Text('Login Page'),
+ backgroundColor: Colors.teal,
+ ),
+ body: Center(
+ child: Column(
+ mainAxisAlignment: MainAxisAlignment.center,
+ children: [
+ const Text(
+ 'Welcome to the Login Page',
+ style: TextStyle(fontSize: 20),
+ ),
+ const SizedBox(height: 20),
+ Row(
+ mainAxisAlignment: MainAxisAlignment.center,
+ children: [
+ const Text("Don't have an account? "),
+ GestureDetector(
+ onTap: () {
+ // Navigate to the Sign Up Page
+ Navigator.push(
+ context,
+ MaterialPageRoute(
+ builder: (context) => const SignUpPage(),
+ ),
+ );
+ },
+ child: const Text(
+ 'Sign up',
+ style: TextStyle(
+ fontWeight: FontWeight.bold,
+ color: Colors.blue,
+ ),
+ ),
+ ),
+ ],
+ ),
+ ],
+ ),
+ ),
+ );
+ }
+}
+class SignUpPage extends StatelessWidget {
+ const SignUpPage({Key? key}) : super(key: key);
+ @override
+ Widget build(BuildContext context) {
+ return Scaffold(
+ appBar: AppBar(
+ title: const Text('Sign Up Page'),
+ backgroundColor: Colors.teal,
+ ),
+ body: Center(
+ child: Column(
+ mainAxisAlignment: MainAxisAlignment.center,
+ children: [
+ const Text(
+ 'Welcome to the Sign Up Page',
+ style: TextStyle(fontSize: 20),
+ ),
+ const SizedBox(height: 20),
+ ElevatedButton(
+ onPressed: () {
+ // Navigate back to the Login Page
+ Navigator.pop(context);
+ },
+ child: const Text('Back to Login'),
+ ),
+ ],
+ ),
+ ),
+ );
+ }
+}
+
+
+
+class SweetCreationHomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.bottomRight,
+            end: Alignment.topLeft,
+            colors: [Colors.pink, Colors.blue],
+          ),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              flex: 4,
+              child: Stack(
+                children: [
+                  // Background Container with Image
+                  Container(
+                    height: 400, // Set desired height
+                    width: double.infinity, // Full screen width
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(
+                          'https://res.cloudinary.com/dfug69cus/image/upload/v1733239863/ca_jlkfgo.jpg',
+                        ),
+                        fit: BoxFit.cover, // Ensures the image covers the area
+                      ),
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(50),
+                        bottomRight: Radius.circular(50),
+                      ),
+                    ),
+                  ),
+                  // Overlay Content
+                  Align(
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 20),
+                          Text(
+                            'Sweet Creation Cakes',
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'Crafting sweet memories, one cake at a time',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Explore Section
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Explore Our Creations',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Find the perfect cake for your celebrations with our wide variety of designs and flavors.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                color: Colors.black.withOpacity(0.6), // Adjust opacity as needed
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Navigation Button
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+              child: _buildNavigationButton(context, 'Discover Now', Main()),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Custom Navigation Button Widget
+  Widget _buildNavigationButton(BuildContext context, String label, Widget destination) {
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => destination),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.pink.shade300,
+        padding: EdgeInsets.symmetric(vertical: 15),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25),
+        ),
+      ),
+      child: Center(
+        child: Text(
+          label,
+          style: TextStyle(fontSize: 18, color: Colors.white),
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
+
+class SignUp extends StatelessWidget {
+ final TextEditingController usernameController = TextEditingController();
+ final TextEditingController emailController = TextEditingController();
+ final TextEditingController passwordController = TextEditingController();
+ final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+ @override
+ Widget build(BuildContext context) {
+ return MaterialApp(
+ debugShowCheckedModeBanner: false,
+ home: Scaffold(
+ appBar: AppBar(
+ title: Text('Sign Up'),
+ backgroundColor: Colors.blueAccent,
+ ),
+ body: Padding(
+ padding: const EdgeInsets.all(16.0),
+ child: SingleChildScrollView(
+ child: Form(
+ key: _formKey,
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.stretch,
+ children: [
+ // Username Field
+ TextFormField(
+ controller: usernameController,
+ decoration: InputDecoration(
+ labelText: 'Username',
+ hintText: 'Enter your username',
+ border: OutlineInputBorder(),
+ ),
+ validator: (value) {
+ if (value == null || value.isEmpty) {
+ return 'Please enter your username';
+ }
+ return null;
+ },
+ ),
+ SizedBox(height: 16),
+ // Email Field
+ TextFormField(
+ controller: emailController,
+ decoration: InputDecoration(
+ labelText: 'Email',
+ hintText: 'Enter your email',
+ border: OutlineInputBorder(),
+ ),
+ keyboardType: TextInputType.emailAddress,
+ validator: (value) {
+ if (value == null || value.isEmpty) {
+ return 'Please enter your email';
+ }
+ // Simple email validation
+ final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+ if (!emailRegex.hasMatch(value)) {
+ return 'Please enter a valid email';
+ }
+ return null;
+ },
+ ),
+ SizedBox(height: 16),
+ // Password Field
+ TextFormField(
+ controller: passwordController,
+ obscureText: true,
+ decoration: InputDecoration(
+ labelText: 'Password',
+ hintText: 'Enter your password',
+ border: OutlineInputBorder(),
+ ),
+ validator: (value) {
+ if (value == null || value.isEmpty) {
+ return 'Please enter your password';
+ }
+ if (value.length < 6) {
+ return 'Password must be at least 6 characters';
+ }
+ return null;
+ },
+ ),
+ SizedBox(height: 24),
+ // Sign Up Button
+ ElevatedButton(
+ onPressed: () {
+ if (_formKey.currentState!.validate()) {
+ // If the form is valid, display a message
+ ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+ content: Text('Processing Data...'),
+ ));
+ }
+ },
+ child: Text('Sign Up'),
+ style: ElevatedButton.styleFrom(
+ backgroundColor: Colors.blueAccent, // Use backgroundColor instead of primary
+ padding: EdgeInsets.symmetric(vertical: 16),
+ shape: RoundedRectangleBorder(
+ borderRadius: BorderRadius.circular(10), // Optional: rounded corners
+ ),
+ ),
+)
+ 
+ ],
+ ),
+ ),
+ ),
+ ),
+ ),
+ );
+ }
+}
+class Main extends StatefulWidget {
+ const Main({Key? key}) : super(key: key);
+ @override
+ _MainPageState createState() => _MainPageState();
+}
+class _MainPageState extends State<Main> {
+ int _selectedIndex = 0;
+ final List<Widget> _pages = [
+ CakeRushHomePage(),
+ FavoritesPage(),
+ ProfilePage(),
+ ];
+ void _onItemTapped(int index) {
+ setState(() {
+ _selectedIndex = index;
+ });
+ }
+ @override
+ Widget build(BuildContext context) {
+ return Scaffold(
+ body: _pages[_selectedIndex],
+ bottomNavigationBar: BottomNavigationBar(
+ currentIndex: _selectedIndex,
+ onTap: _onItemTapped,
+ items: const [
+ BottomNavigationBarItem(
+ icon: Icon(Icons.home),
+ label: 'Home',
+ ),
+ BottomNavigationBarItem(
+ icon: Icon(Icons.favorite),
+ label: 'Favorites',
+ ),
+ BottomNavigationBarItem(
+ icon: Icon(Icons.person),
+ label: 'Profile',
+ ),
+ ],
+ selectedItemColor: Colors.teal,
+ unselectedItemColor: Colors.grey,
+ ),
+ );
+ }
+}
+class CakeRushHomePage extends StatefulWidget {
+ @override
+ _CakeRushHomePageState createState() => _CakeRushHomePageState();
+}
+class _CakeRushHomePageState extends State<CakeRushHomePage> {
+ String _searchText = '';
+ final List<Map<String, String>> products = [
+ {
+ 'image':
+ 'https://res.cloudinary.com/dfug69cus/image/upload/v1733472968/1_vrnymz.jpg',
+ 'title': 'Cake Explosion Gift Box',
+ 'description': 'CakeRush Philippines',
+ 'price': '₱1,799.00',
+ },
+ {
+ 'image':
+ 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473181/2_fr02qr.jpg',
+ 'title': 'Love Explosion Gift Box',
+ 'description': 'CakeRush Philippines',
+ 'price': '₱1,799.00',
+ },
+ {
+ 'image':
+ 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473193/3_f0xxac.jpg',
+ 'title': 'Barrel Of Festivities',
+ 'description': "AJ's Cake and Pastries",
+ 'price': '₱1,649.00',
+ },
+ {
+ 'image':
+ 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473199/4_plf8wi.jpg',
+ 'title': 'Ube Sans Rival Cake',
+ 'description': 'Sweet Success',
+ 'price': 'from ₱1,599.00',
+ },
+ {
+ 'image':
+ 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473312/5_u8msev.jpg',
+ 'title': 'Chocolate Dream Cake',
+ 'description': 'Cake Factory',
+ 'price': '₱1,299.00',
+ },
+ {
+ 'image':
+ 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473323/6_oogso1.jpg',
+ 'title': 'Rainbow Sprinkle Cake',
+ 'description': 'Happy Cakes',
+ 'price': '₱1,499.00',
+ },
+ {
+ 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473323/6_oogso1.jpg',
+ 'title': 'Rainbow Sprinkle Cake',
+ 'description': 'Happy Cakes',
+ 'price': '₱1,499.00',
+ },
+ {
+ 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473719/7_gndm9j.jpg',
+ 'title': 'Strawberry Shortcake',
+ 'description': 'Berry Sweet',
+ 'price': '₱1,899.00',
+ },
+ {
+ 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473728/8_x6avah.jpg',
+ 'title': 'Red Velvet Delight',
+ 'description': 'Sweet Delights',
+ 'price': '₱1,749.00',
+ },
+ {
+ 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493316/blue_a2hglz.jpg',
+ 'title': 'Blueberry Cheesecake',
+ 'description': 'Cheesecake Factory',
+ 'price': '₱1,599.00',
+ },
+ {
+ 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493339/carrot_hz9mfl.jpg',
+ 'title': 'Carrot Walnut Cake',
+ 'description': 'Healthy Bakes',
+ 'price': '₱1,699.00',
+ },
+ {
+ 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493349/cholate_e8t8qr.jpg',
+ 'title': 'Chocolate Fudge Cake',
+ 'description': 'Decadent Desserts',
+ 'price': '₱1,499.00',
+ },
+ {
+ 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493421/pine_vznkyp.jpg',
+ 'title': 'Pineapple Upside Down Cake',
+ 'description': 'Tropical Treats',
+ 'price': '₱1,599.00',
+ },
+ {
+ 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493326/cake_orayz8.jpg',
+ 'title': 'Classic Tiramisu',
+ 'description': 'Italian Bakery',
+ 'price': '₱1,699.00',
+ },
+ {
+ 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493359/mango_cfdq33.jpg',
+ 'title': 'Mango Cream Cake',
+ 'description': 'Summer Sweets',
+ 'price': '₱1,799.00',
+ },
+ {
+ 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493405/matcha_p2i73l.jpg',
+ 'title': 'Matcha Green Tea Cake',
+ 'description': 'Zen Bakery',
+ 'price': '₱1,899.00',
+ },
+ ];
+ 
+ @override
+ Widget build(BuildContext context) {
+ return Scaffold(
+ appBar: AppBar(
+ title: const Text('Sweet Creation'),
+ backgroundColor: Colors.pink,
+ ),
+ body: Container(
+ decoration: const BoxDecoration(
+ gradient: LinearGradient(
+ colors: [Colors.pink, Colors.blue],
+ begin: Alignment.topLeft,
+ end: Alignment.bottomRight,
+ ),
+ ),
+ child: Column(
+ children: [
+ // Search Bar
+ Padding(
+ padding: const EdgeInsets.all(8.0),
+ child: TextField(
+ onChanged: (value) {
+ setState(() {
+ _searchText = value.toLowerCase();
+ });
+ },
+ decoration: InputDecoration(
+ prefixIcon: const Icon(Icons.search),
+ hintText: 'Search cakes and sweets...',
+ filled: true,
+ fillColor: Colors.white,
+ border: OutlineInputBorder(
+ borderRadius: BorderRadius.circular(30),
+ borderSide: BorderSide.none,
+ ),
+ ),
+ ),
+ ),
+ // Product Grid
+ Expanded(
+ child: Padding(
+ padding: const EdgeInsets.symmetric(horizontal: 8.0),
+ child: GridView.builder(
+ itemCount: products.length,
+ gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+ crossAxisCount: 2,
+ childAspectRatio: 0.75,
+ crossAxisSpacing: 8,
+ mainAxisSpacing: 8,
+ ),
+ itemBuilder: (context, index) {
+ final product = products[index];
+ if (_searchText.isNotEmpty &&
+ !product['title']!
+ .toLowerCase()
+ .contains(_searchText)) {
+ return const SizedBox.shrink();
+ }
+ return Card(
+ elevation: 3,
+ shape: RoundedRectangleBorder(
+ borderRadius: BorderRadius.circular(10),
+ ),
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.stretch,
+ children: [
+ Expanded(
+ child: ClipRRect(
+ borderRadius: const BorderRadius.vertical(
+ top: Radius.circular(10),
+ ),
+ child: Image.network(
+ product['image']!,
+ fit: BoxFit.cover,
+ ),
+ ),
+ ),
+ Padding(
+ padding: const EdgeInsets.all(8.0),
+ child: Column(
+ crossAxisAlignment: CrossAxisAlignment.start,
+ children: [
+ Text(
+ product['title']!,
+ style: const TextStyle(
+ fontWeight: FontWeight.bold,
+ ),
+ maxLines: 2,
+ overflow: TextOverflow.ellipsis,
+ ),
+ const SizedBox(height: 4),
+ Text(
+ product['description']!,
+ style: TextStyle(
+ color: Colors.grey[600],
+ fontSize: 12,
+ ),
+ ),
+ const SizedBox(height: 8),
+ Text(
+ product['price']!,
+ style: const TextStyle(
+ fontWeight: FontWeight.bold,
+ color: Colors.teal,
+ ),
+ ),
+ ],
+ ),
+ ),
+ ],
+ ),
+ );
+ },
+ ),
+ ),
+ ),
+ ],
+ ),
+ ),
+ );
+ }
+}
+
+
+
+
+
+
+
+
+
+
+
+class FavoritesPage extends StatelessWidget {
+ @override
+ Widget build(BuildContext context) {
+ return Scaffold(
+ appBar: AppBar(
+ title: const Text('Favorites'),
+ backgroundColor: Colors.teal,
+ ),
+ body: const Center(
+ child: Text('Your favorite items will appear here!',
+ style: TextStyle(fontSize: 18)),
+ ),
+ );
+ }
+}
+
+
+class ProfilePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('User Profile'),
+        backgroundColor: Colors.transparent,
+        elevation: 0, // No shadow
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blue, Colors.pink],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue, Colors.pink], // Gradient colors
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Profile Picture
+              const CircleAvatar(
+                radius: 80,
+                backgroundImage: NetworkImage(
+                  'https://res.cloudinary.com/dfug69cus/raw/upload/v1733480794/AF1QipMaDAcS_SSbDJd2bJ8oku0MPdaq_H6bwIppAJhM_xiaaps', // Placeholder image
+                ),
+              ),
+              const SizedBox(height: 20),
+              // User's Name
+              const Text(
+                'John Rey',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 10),
+              // User's Job or Role
+              const Text(
+                'Flutter Developer',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white70,
+                ),
+              ),
+              const SizedBox(height: 10),
+              // Bio Section
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                child: Text(
+                  'Building beautiful, fast, and scalable apps with Flutter. Always excited to learn new technologies!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Follow Button
+              ElevatedButton(
+                onPressed: () {
+                  // Action for the button
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 32, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text(
+                  'Follow',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Social Media Links Section (icons)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.facebook),
+                    color: Colors.white,
+                    onPressed: () {
+                      // Action for Facebook
+                    },
+                  ),
+                  
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
