@@ -549,6 +549,7 @@ class SignUp extends StatelessWidget {
  );
  }
 }
+
 class Main extends StatefulWidget {
  const Main({Key? key}) : super(key: key);
  @override
@@ -559,7 +560,8 @@ class _MainPageState extends State<Main> {
  final List<Widget> _pages = [
  CakeRushHomePage(),
  FavoritesPage(),
- ProfilePage(),
+ InboxPage(),
+    ProfilePage(),
  ];
  void _onItemTapped(int index) {
  setState(() {
@@ -582,7 +584,10 @@ class _MainPageState extends State<Main> {
  icon: Icon(Icons.favorite),
  label: 'Favorites',
  ),
- BottomNavigationBarItem(
+    BottomNavigationBarItem(
+ icon: Icon(Icons.inbox),
+ label: 'Inbox',
+ ), BottomNavigationBarItem(
  icon: Icon(Icons.person),
  label: 'Profile',
  ),
@@ -593,241 +598,391 @@ class _MainPageState extends State<Main> {
  );
  }
 }
+
+
+
+
+
+
 class CakeRushHomePage extends StatefulWidget {
- @override
- _CakeRushHomePageState createState() => _CakeRushHomePageState();
+  @override
+  _CakeRushHomePageState createState() => _CakeRushHomePageState();
 }
+
 class _CakeRushHomePageState extends State<CakeRushHomePage> {
- String _searchText = '';
- final List<Map<String, String>> products = [
- {
- 'image':
- 'https://res.cloudinary.com/dfug69cus/image/upload/v1733472968/1_vrnymz.jpg',
- 'title': 'Cake Explosion Gift Box',
- 'description': 'CakeRush Philippines',
- 'price': '₱1,799.00',
- },
- {
- 'image':
- 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473181/2_fr02qr.jpg',
- 'title': 'Love Explosion Gift Box',
- 'description': 'CakeRush Philippines',
- 'price': '₱1,799.00',
- },
- {
- 'image':
- 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473193/3_f0xxac.jpg',
- 'title': 'Barrel Of Festivities',
- 'description': "AJ's Cake and Pastries",
- 'price': '₱1,649.00',
- },
- {
- 'image':
- 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473199/4_plf8wi.jpg',
- 'title': 'Ube Sans Rival Cake',
- 'description': 'Sweet Success',
- 'price': 'from ₱1,599.00',
- },
- {
- 'image':
- 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473312/5_u8msev.jpg',
- 'title': 'Chocolate Dream Cake',
- 'description': 'Cake Factory',
- 'price': '₱1,299.00',
- },
- {
- 'image':
- 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473323/6_oogso1.jpg',
- 'title': 'Rainbow Sprinkle Cake',
- 'description': 'Happy Cakes',
- 'price': '₱1,499.00',
- },
- {
- 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473323/6_oogso1.jpg',
- 'title': 'Rainbow Sprinkle Cake',
- 'description': 'Happy Cakes',
- 'price': '₱1,499.00',
- },
- {
- 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473719/7_gndm9j.jpg',
- 'title': 'Strawberry Shortcake',
- 'description': 'Berry Sweet',
- 'price': '₱1,899.00',
- },
- {
- 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473728/8_x6avah.jpg',
- 'title': 'Red Velvet Delight',
- 'description': 'Sweet Delights',
- 'price': '₱1,749.00',
- },
- {
- 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493316/blue_a2hglz.jpg',
- 'title': 'Blueberry Cheesecake',
- 'description': 'Cheesecake Factory',
- 'price': '₱1,599.00',
- },
- {
- 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493339/carrot_hz9mfl.jpg',
- 'title': 'Carrot Walnut Cake',
- 'description': 'Healthy Bakes',
- 'price': '₱1,699.00',
- },
- {
- 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493349/cholate_e8t8qr.jpg',
- 'title': 'Chocolate Fudge Cake',
- 'description': 'Decadent Desserts',
- 'price': '₱1,499.00',
- },
- {
- 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493421/pine_vznkyp.jpg',
- 'title': 'Pineapple Upside Down Cake',
- 'description': 'Tropical Treats',
- 'price': '₱1,599.00',
- },
- {
- 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493326/cake_orayz8.jpg',
- 'title': 'Classic Tiramisu',
- 'description': 'Italian Bakery',
- 'price': '₱1,699.00',
- },
- {
- 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493359/mango_cfdq33.jpg',
- 'title': 'Mango Cream Cake',
- 'description': 'Summer Sweets',
- 'price': '₱1,799.00',
- },
- {
- 'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493405/matcha_p2i73l.jpg',
- 'title': 'Matcha Green Tea Cake',
- 'description': 'Zen Bakery',
- 'price': '₱1,899.00',
- },
- ];
- 
- @override
- Widget build(BuildContext context) {
- return Scaffold(
- appBar: AppBar(
- title: const Text('Sweet Creation'),
- backgroundColor: Colors.pink,
- ),
- body: Container(
- decoration: const BoxDecoration(
- gradient: LinearGradient(
- colors: [Colors.pink, Colors.blue],
- begin: Alignment.topLeft,
- end: Alignment.bottomRight,
- ),
- ),
- child: Column(
- children: [
- // Search Bar
- Padding(
- padding: const EdgeInsets.all(8.0),
- child: TextField(
- onChanged: (value) {
- setState(() {
- _searchText = value.toLowerCase();
- });
- },
- decoration: InputDecoration(
- prefixIcon: const Icon(Icons.search),
- hintText: 'Search cakes and sweets...',
- filled: true,
- fillColor: Colors.white,
- border: OutlineInputBorder(
- borderRadius: BorderRadius.circular(30),
- borderSide: BorderSide.none,
- ),
- ),
- ),
- ),
- // Product Grid
- Expanded(
- child: Padding(
- padding: const EdgeInsets.symmetric(horizontal: 8.0),
- child: GridView.builder(
- itemCount: products.length,
- gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
- crossAxisCount: 2,
- childAspectRatio: 0.75,
- crossAxisSpacing: 8,
- mainAxisSpacing: 8,
- ),
- itemBuilder: (context, index) {
- final product = products[index];
- if (_searchText.isNotEmpty &&
- !product['title']!
- .toLowerCase()
- .contains(_searchText)) {
- return const SizedBox.shrink();
- }
- return Card(
- elevation: 3,
- shape: RoundedRectangleBorder(
- borderRadius: BorderRadius.circular(10),
- ),
- child: Column(
- crossAxisAlignment: CrossAxisAlignment.stretch,
- children: [
- Expanded(
- child: ClipRRect(
- borderRadius: const BorderRadius.vertical(
- top: Radius.circular(10),
- ),
- child: Image.network(
- product['image']!,
- fit: BoxFit.cover,
- ),
- ),
- ),
- Padding(
- padding: const EdgeInsets.all(8.0),
- child: Column(
- crossAxisAlignment: CrossAxisAlignment.start,
- children: [
- Text(
- product['title']!,
- style: const TextStyle(
- fontWeight: FontWeight.bold,
- ),
- maxLines: 2,
- overflow: TextOverflow.ellipsis,
- ),
- const SizedBox(height: 4),
- Text(
- product['description']!,
- style: TextStyle(
- color: Colors.grey[600],
- fontSize: 12,
- ),
- ),
- const SizedBox(height: 8),
- Text(
- product['price']!,
- style: const TextStyle(
- fontWeight: FontWeight.bold,
- color: Colors.teal,
- ),
- ),
- ],
- ),
- ),
- ],
- ),
- );
- },
- ),
- ),
- ),
- ],
- ),
- ),
- );
- }
+  String _searchText = '';
+  final List<Map<String, String>> products = [
+    {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733472968/1_vrnymz.jpg', 'title': 'Cake Explosion Gift Box', 'description': 'CakeRush Philippines', 'price': '₱1,799.00'},
+    {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473181/2_fr02qr.jpg', 'title': 'Love Explosion Gift Box', 'description': 'CakeRush Philippines', 'price': '₱1,799.00'},
+    {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473193/3_f0xxac.jpg', 'title': 'Barrel Of Festivities', 'description': "AJ's Cake and Pastries", 'price': '₱1,649.00'},
+    {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473199/4_plf8wi.jpg', 'title': 'Ube Sans Rival Cake', 'description': 'Sweet Success', 'price': 'from ₱1,599.00'},
+    {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473312/5_u8msev.jpg', 'title': 'Strawberry Dream Cake', 'description': 'Cake Factory', 'price': '₱1,299.00'},
+    {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473323/6_oogso1.jpg', 'title': 'Strawberry Cake', 'description': 'Happy Cakes', 'price': '₱1,499.00'},
+    {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473719/7_gndm9j.jpg', 'title': 'Strawberry Shortcake', 'description': 'Berry Sweet', 'price': '₱1,899.00'},
+    {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473728/8_x6avah.jpg', 'title': 'Red Velvet Delight', 'description': 'Sweet Delights', 'price': '₱1,749.00'},
+    {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493316/blue_a2hglz.jpg', 'title': 'Blueberry Cheesecake', 'description': 'Cheesecake Factory', 'price': '₱1,599.00'},
+    {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493339/carrot_hz9mfl.jpg', 'title': 'Carrot Walnut Cake', 'description': 'Healthy Bakes', 'price': '₱1,699.00'},
+    {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493349/cholate_e8t8qr.jpg', 'title': 'Chocolate Fudge Cake', 'description': 'Decadent Desserts', 'price': '₱1,499.00'},
+    {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493421/pine_vznkyp.jpg', 'title': 'Pineapple Upside Down Cake', 'description': 'Tropical Treats', 'price': '₱1,599.00'},
+    {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493326/cake_orayz8.jpg', 'title': 'Classic Tiramisu', 'description': 'Italian Bakery', 'price': '₱1,699.00'},
+    {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493359/mango_cfdq33.jpg', 'title': 'Mango Cream Cake', 'description': 'Summer Sweets', 'price': '₱1,799.00'},
+    {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493405/matcha_p2i73l.jpg', 'title': 'Matcha Green Tea Cake', 'description': 'Zen Bakery', 'price': '₱1,899.00'},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Sweet Creation'),
+        backgroundColor: Colors.pink,
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.pink, Colors.blue],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Column(
+          children: [
+            // Search Bar
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                onChanged: (value) {
+                  setState(() {
+                    _searchText = value.toLowerCase();
+                  });
+                },
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.search),
+                  hintText: 'Search cakes and sweets...',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+            ),
+            // Product Grid
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: GridView.builder(
+                  itemCount: products.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.75,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                  ),
+                  itemBuilder: (context, index) {
+                    final product = products[index];
+                    if (_searchText.isNotEmpty &&
+                        !product['title']!.toLowerCase().contains(_searchText)) {
+                      return const SizedBox.shrink();
+                    }
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductDetailsPage(product: product),
+                          ),
+                        );
+                      },
+                      child: Card(
+                        elevation: 3,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(10),
+                                ),
+                                child: Image.network(
+                                  product['image']!,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    product['title']!,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    product['description']!,
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    product['price']!,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.teal,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 
+
+
+
+class ProductDetailsPage extends StatelessWidget {
+  final Map<String, String> product;
+
+  const ProductDetailsPage({Key? key, required this.product}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(product['title']!),
+        backgroundColor: Colors.pink,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: Image.network(
+                product['image']!,
+                width: double.infinity, // Full width
+                height: 200, // Adjusted height
+                fit: BoxFit.cover, // Image fit
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              product['title']!,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              product['description']!,
+              style: const TextStyle(fontSize: 16, color: Colors.grey),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              product['price']!,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.teal,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    // Action for 'Add to Cart'
+                    // Add your function here
+                  },
+                  child: const Text('Add to Cart'),
+                ),
+                const SizedBox(width: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    // Action for 'Buy Now'
+                    // Add your function here
+                  },
+                  child: const Text('Buy Now'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+class InboxPage extends StatelessWidget {
+  final List<Map<String, String>> chats = [
+    {'name': 'Alice', 'lastMessage': 'Hey there!', 'timestamp': '10:45 AM'},
+    {'name': 'Bob', 'lastMessage': 'What\'s up?', 'timestamp': 'Yesterday'},
+    {'name': 'Charlie', 'lastMessage': 'Good morning!', 'timestamp': '12:30 PM'},
+    // Add more chat data as needed
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Inbox'),
+        backgroundColor: Colors.pink,
+      ),
+      body: ListView.builder(
+        itemCount: chats.length,
+        itemBuilder: (context, index) {
+          final chat = chats[index];
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatDetailsPage(chat: chat),
+                ),
+              );
+            },
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.grey[200],
+                child: Text(chat['name']![0], style: TextStyle(fontSize: 24)),
+              ),
+              title: Text(chat['name']!),
+              subtitle: Text(chat['lastMessage']!),
+              trailing: Text(chat['timestamp']!, style: TextStyle(fontSize: 12, color: Colors.grey)),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class ChatDetailsPage extends StatelessWidget {
+  final Map<String, String> chat;
+
+  ChatDetailsPage({required this.chat});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(chat['name']!),
+        backgroundColor: Colors.pink,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.all(8.0),
+              children: [
+                // Example message
+                ChatMessage(sender: 'Alice', message: 'Hey there!', timestamp: '10:45 AM', isSent: true),
+                ChatMessage(sender: 'You', message: 'Hello!', timestamp: '10:46 AM', isSent: false),
+                // Add more messages as needed
+              ],
+            ),
+          ),
+          Divider(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Type a message...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.send, color: Colors.pink),
+                  onPressed: () {
+                    // Handle message send logic here
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ChatMessage extends StatelessWidget {
+  final String sender;
+  final String message;
+  final String timestamp;
+  final bool isSent;
+
+  ChatMessage({required this.sender, required this.message, required this.timestamp, required this.isSent});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: isSent ? MainAxisAlignment.end : MainAxisAlignment.start,
+      children: [
+        !isSent
+            ? CircleAvatar(
+                backgroundColor: Colors.grey[200],
+                child: Text(sender[0], style: TextStyle(fontSize: 24)),
+              )
+            : SizedBox.shrink(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Column(
+            crossAxisAlignment: isSent ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              Text(
+        message,
+        style: TextStyle(
+          color: isSent ? Colors.white : Colors.black,
+          fontSize: 14, // Consistent font size for better readability
+        ),
+      ),
+              Text(timestamp, style: TextStyle(fontSize: 12, color: Colors.grey)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 
 
