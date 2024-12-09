@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+
 void main() {
- runApp(SweetCreationsApp());
+  runApp(SweetCreationsApp());
 }
+
 class SweetCreationsApp extends StatelessWidget {
- @override
- Widget build(BuildContext context) {
- return MaterialApp(
- debugShowCheckedModeBanner: false,
- home: SplashScreen (),
- );
- }
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => CartProvider(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home:SplashScreen(),
+      ),
+    );
+  }
 }
+
+
 class SplashScreen extends StatefulWidget {
  @override
  _SplashScreenState createState() => _SplashScreenState();
@@ -550,6 +559,12 @@ class SignUp extends StatelessWidget {
  }
 }
 
+
+
+
+
+
+
 class Main extends StatefulWidget {
  const Main({Key? key}) : super(key: key);
  @override
@@ -604,6 +619,202 @@ class _MainPageState extends State<Main> {
 
 
 
+
+
+class CartItem {
+  final String image;
+  final String title;
+  final String description;
+  final String price;
+
+  CartItem({required this.image, required this.title, required this.description, required this.price});
+}
+
+class CartProvider with ChangeNotifier {
+  List<CartItem> _cartItems = [];
+
+  List<CartItem> get cartItems => _cartItems;
+  int get itemCount => _cartItems.length;
+
+  void addToCart(CartItem item) {
+    _cartItems.add(item);
+    notifyListeners(); // Notify listeners so UI can update
+  }
+
+  void removeFromCart(CartItem item) {
+    _cartItems.remove(item);
+    notifyListeners(); // Notify listeners so UI can update
+  }
+
+  void buyNow(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Confirm Purchase'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Are you sure you want to buy now?'),
+              const SizedBox(height: 16),
+              _DeliveryDateTimeSelector(),
+              const SizedBox(height: 16),
+              _QuantitySelector(),
+              const SizedBox(height: 16),
+              _MessageBox(),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Simulate order processing
+                notifyListeners(); // Optional: Notifies listeners about order confirmation
+                Navigator.of(context).pop(); // Close the dialog
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Order confirmed and processed successfully!')),
+                );
+              },
+              child: Text('Confirm Order'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog without any action
+              },
+              child: Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+
+class _DeliveryDateTimeSelector extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text('Select Delivery Date:'),
+        InkWell(
+          onTap: () async {
+            DateTime? pickedDate = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime.now(),
+              lastDate: DateTime(2101),
+            );
+
+            if (pickedDate != null) {
+              // Update state with selected date
+              // For simplicity, we're just showing the date
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Selected date: ${DateFormat.yMd().format(pickedDate)}')),
+              );
+            }
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text('Choose Date'),
+          ),
+        ),
+        SizedBox(height: 16),
+        Text('Select Delivery Time:'),
+        InkWell(
+          onTap: () async {
+            TimeOfDay? pickedTime = await showTimePicker(
+              context: context,
+              initialTime: TimeOfDay.now(),
+            );
+
+            if (pickedTime != null) {
+              // Update state with selected time
+              // For simplicity, we're just showing the time
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Selected time: ${pickedTime.format(context)}')),
+              );
+            }
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text('Choose Time'),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _QuantitySelector extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    int _quantity = 1; // Default quantity
+
+    return Column(
+      children: [
+        Text('Select Quantity:'),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                if (_quantity > 1) {
+                  _quantity--;
+                }
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Quantity: $_quantity')),
+                );
+              },
+              child: Text('-'),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text('$_quantity'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _quantity++;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Quantity: $_quantity')),
+                );
+              },
+              child: Text('+'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _MessageBox extends StatelessWidget {
+  final TextEditingController _messageController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text('Special Message:'),
+        TextField(
+          controller: _messageController,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: 'Type your message here...',
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class CakeRushHomePage extends StatefulWidget {
   @override
   _CakeRushHomePageState createState() => _CakeRushHomePageState();
@@ -611,7 +822,7 @@ class CakeRushHomePage extends StatefulWidget {
 
 class _CakeRushHomePageState extends State<CakeRushHomePage> {
   String _searchText = '';
-  final List<Map<String, String>> products = [
+   final List<Map<String, String>> products = [
     {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733472968/1_vrnymz.jpg', 'title': 'Cake Explosion Gift Box', 'description': 'CakeRush Philippines', 'price': '₱1,799.00'},
     {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473181/2_fr02qr.jpg', 'title': 'Love Explosion Gift Box', 'description': 'CakeRush Philippines', 'price': '₱1,799.00'},
     {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733473193/3_f0xxac.jpg', 'title': 'Barrel Of Festivities', 'description': "AJ's Cake and Pastries", 'price': '₱1,649.00'},
@@ -628,13 +839,41 @@ class _CakeRushHomePageState extends State<CakeRushHomePage> {
     {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493359/mango_cfdq33.jpg', 'title': 'Mango Cream Cake', 'description': 'Summer Sweets', 'price': '₱1,799.00'},
     {'image': 'https://res.cloudinary.com/dfug69cus/image/upload/v1733493405/matcha_p2i73l.jpg', 'title': 'Matcha Green Tea Cake', 'description': 'Zen Bakery', 'price': '₱1,899.00'},
   ];
-
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sweet Creation'),
         backgroundColor: Colors.pink,
+        actions: [
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.add_shopping_cart),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CartPage()),
+                  );
+                },
+              ),
+              if (cartProvider.itemCount > 0)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: CircleAvatar(
+                    backgroundColor: Colors.red,
+                    radius: 10,
+                    child: Text(
+                      '${cartProvider.itemCount}',
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -742,6 +981,20 @@ class _CakeRushHomePageState extends State<CakeRushHomePage> {
                                       color: Colors.teal,
                                     ),
                                   ),
+                                  const SizedBox(height: 8),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      cartProvider.addToCart(
+                                        CartItem(
+                                          image: product['image']!,
+                                          title: product['title']!,
+                                          description: product['description']!,
+                                          price: product['price']!,
+                                        ),
+                                      );
+                                    },
+                                    child: const Text('Add to Cart'),
+                                  ),
                                 ],
                               ),
                             ),
@@ -760,10 +1013,6 @@ class _CakeRushHomePageState extends State<CakeRushHomePage> {
   }
 }
 
-
-
-
-
 class ProductDetailsPage extends StatelessWidget {
   final Map<String, String> product;
 
@@ -771,6 +1020,7 @@ class ProductDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(product['title']!),
@@ -818,16 +1068,21 @@ class ProductDetailsPage extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    // Action for 'Add to Cart'
-                    // Add your function here
+                    cartProvider.addToCart(
+                      CartItem(
+                        image: product['image']!,
+                        title: product['title']!,
+                        description: product['description']!,
+                        price: product['price']!,
+                      ),
+                    );
                   },
                   child: const Text('Add to Cart'),
                 ),
                 const SizedBox(width: 16),
                 ElevatedButton(
                   onPressed: () {
-                    // Action for 'Buy Now'
-                    // Add your function here
+                    cartProvider.buyNow(context);
                   },
                   child: const Text('Buy Now'),
                 ),
@@ -839,6 +1094,44 @@ class ProductDetailsPage extends StatelessWidget {
     );
   }
 }
+
+class CartPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context);
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Cart'),
+        backgroundColor: Colors.pink,
+      ),
+      body: ListView.builder(
+        itemCount: cartProvider.cartItems.length,
+        itemBuilder: (context, index) {
+          final item = cartProvider.cartItems[index];
+          return ListTile(
+            leading: Image.network(item.image),
+            title: Text(item.title),
+            subtitle: Text(item.description),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(item.price),
+                IconButton(
+                  icon: const Icon(Icons.remove_circle_outline),
+                  onPressed: () {
+                    cartProvider.removeFromCart(item);
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+
 
 
 class InboxPage extends StatelessWidget {
