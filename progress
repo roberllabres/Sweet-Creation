@@ -323,39 +323,206 @@ class LoginPage extends StatelessWidget {
  );
  }
 }
-class SignUpPage extends StatelessWidget {
- const SignUpPage({Key? key}) : super(key: key);
- @override
- Widget build(BuildContext context) {
- return Scaffold(
- appBar: AppBar(
- title: const Text('Sign Up Page'),
- backgroundColor: Colors.teal,
- ),
- body: Center(
- child: Column(
- mainAxisAlignment: MainAxisAlignment.center,
- children: [
- const Text(
- 'Welcome to the Sign Up Page',
- style: TextStyle(fontSize: 20),
- ),
- const SizedBox(height: 20),
- ElevatedButton(
- onPressed: () {
- // Navigate back to the Login Page
- Navigator.pop(context);
- },
- child: const Text('Back to Login'),
- ),
- ],
- ),
- ),
- );
- }
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({Key? key}) : super(key: key);
+
+  @override
+  _SignUpPageState createState() => _SignUpPageState();
 }
 
+class _SignUpPageState extends State<SignUpPage> {
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
+  // Function to validate sign-up credentials
+  void _validateAndSignUp() {
+    String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
+    String confirmPassword = _confirmPasswordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+      _showErrorDialog('Input Required', 'Please fill in all fields to proceed.');
+    } else if (password != confirmPassword) {
+      _showErrorDialog('Password Mismatch', 'Passwords do not match.');
+    } else {
+      // Proceed with sign-up logic
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Sign-up successful!')),
+      );
+    }
+  }
+
+  // Function to show an error dialog
+  void _showErrorDialog(String title, String content) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.bottomRight,
+            end: Alignment.topLeft,
+            colors: [Colors.pink, Colors.blue],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.network(
+                    'https://res.cloudinary.com/dn38ffinf/image/upload/v1733118295/logo_pkdaas.png',
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Sweet Creations',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: !_isPasswordVisible,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _confirmPasswordController,
+                    obscureText: !_isConfirmPasswordVisible,
+                    decoration: InputDecoration(
+                      labelText: 'Confirm Password',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isConfirmPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      _validateAndSignUp();
+                      if (_emailController.text.isNotEmpty && _passwordController.text == _confirmPasswordController.text) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) =>SweetCreationHomePage()),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      minimumSize: const Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    child: const Text(
+                      'Sign Up',
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("Already have an account? "),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context); // Navigate back to login screen
+                        },
+                        child: const Text(
+                          'Login',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class SweetCreationHomePage extends StatelessWidget {
   @override
@@ -1502,7 +1669,7 @@ class ProfilePage extends StatelessWidget {
                 const CircleAvatar(
                   radius: 60,
                   backgroundImage: NetworkImage(
-                      'https://res.cloudinary.com/dfug69cus/raw/upload/v1733480794/AF1QipMaDAcS_SSbDJd2bJ8oku0MPdaq_H6bwIppAJhM_xiaaps'),
+                      'https://res.cloudinary.com/dn38ffinf/image/upload/v1733876397/avatar_kcmjpr.jpg'),
                 ),
                 const SizedBox(height: 20),
                 Text(
@@ -1538,15 +1705,7 @@ class ProfilePage extends StatelessWidget {
                 const Divider(color: Colors.white30),
 
                 // Sub-Purchase Options
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildPurchaseOption(Icons.payment, 'To Pay'),
-                    _buildPurchaseOption(Icons.local_shipping, 'To Ship'),
-                    _buildPurchaseOption(Icons.inbox, 'To Receive', badge: true),
-                    _buildPurchaseOption(Icons.star, 'To Rate'),
-                  ],
-                ),
+               
                 const SizedBox(height: 20),
 
                 // Digital Purchases Section
@@ -1613,36 +1772,5 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildPurchaseOption(IconData icon, String label, {bool badge = false}) {
-    return Column(
-      children: [
-        Stack(
-          children: [
-            Icon(icon, size: 40, color: Colors.white),
-            if (badge)
-              Positioned(
-                right: 0,
-                top: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Text(
-                    '1',
-                    style: TextStyle(color: Colors.white, fontSize: 10),
-                  ),
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(height: 5),
-        Text(
-          label,
-          style: const TextStyle(color: Colors.white70),
-        ),
-      ],
-    );
-  }
+
 }
